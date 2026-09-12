@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "noEmit": true,
+    // `vite/client` is here only to declare `import.meta.glob`, which `src/lib/registry.ts`
+    // uses. Nothing in this project runs it — it is type-checked, not executed.
+    "types": ["node", "vite/client"],
+    // The check scripts run under tsx, which resolves ESM specifiers literally and
+    // therefore needs the `.ts` extension written out.
+    "allowImportingTsExtensions": true
+  },
+  // Content modules are pulled in by the scripts, so they belong to this project too.
+  // `src/lib` is taken wholesale rather than file by file: a kernel may import any of it,
+  // and a hand-maintained list breaks the build the first time someone forgets to add to
+  // it — which is a failure that only shows up in `tsc -b`, not in the dev server.
+  "include": ["vite.config.ts", "scripts/**/*.ts", "src/content/**/*.ts", "src/lib/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}

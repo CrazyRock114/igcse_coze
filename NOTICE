@@ -1,0 +1,82 @@
+IGCSE Physics 0625 — Interactive Bilingual Course
+=================================================
+
+This project is non-commercial (school / public-benefit use).
+
+
+Third-party code and design influences
+--------------------------------------
+
+No source code from the projects below has been copied into this repository. Where
+an approach was adopted, it was reimplemented; the credits are recorded here because
+the ideas materially shaped this design.
+
+* ChemAIForge — https://github.com/zhangifonly/ChemAIForge — MIT License
+  Influence: pure-function simulation kernel with a rule registry, and the practice of
+  attaching data-driven test probes to a content catalogue so every item is verified
+  to actually work.
+
+* mathviz ("数学之美") — https://github.com/zhangifonly/mathviz
+  PolyForm Noncommercial License 1.0.0 — https://polyformproject.org/licenses/noncommercial/1.0.0
+  Influence: the narration script data model (script → sections → lines, with lines
+  able to drive the visualisation), and the pre-build content integrity check.
+
+  NOTE: PolyForm Noncommercial permits non-commercial use only. This project is
+  non-commercial, so the influence is compatible. Should this project ever become
+  commercial, that status must be re-examined and, if any mathviz code is introduced,
+  a commercial licence obtained from its authors. Any such code must be isolated
+  under src/vendor/mathviz/ so it can be identified or removed cleanly. As of this
+  writing, no mathviz code is present.
+
+* edulab — https://github.com/wy51ai/edulab — Apache License 2.0
+  Influence: the content-generation discipline of computing values exactly in a
+  kernel and then self-checking that the kernel's answer equals the value displayed
+  to the student.
+
+* physics.whaty.org, bio.whaty.org, synthoming.whaty.org (closed-source websites)
+  Influence: lesson page information architecture; and, from SynthoMing, the
+  progressive content-depth switcher and the layered audio fallback chain
+  (pre-generated file → generic file → browser speech synthesis).
+
+* LearningCell — https://github.com/GordenSun/LearningCell
+  No licence is declared, so all rights are reserved by its authors. No code or
+  asset from this project may be used here. Referenced for inspiration only.
+
+* "物理学与现代生活" — https://github.com/CrazyRock114/physics
+  A republication of the assets of physics-app-*.tcloudbaseapp.com. Its own README
+  states that copyright in the data and implementation remains with the original
+  author and that the repository exists for study and local demonstration only.
+  No licence is declared, so all rights are reserved. No code or data from it is used
+  here.
+  Influence: its per-simulation data contract independently validated the
+  content-as-data approach used in src/content/. Two ideas were adopted and
+  reimplemented from scratch: one-click scenario presets (`SimSpec.presets`) and a
+  short on-canvas instruction telling the student what is draggable (`SimSpec.hint`).
+
+* "Science_Math" — https://github.com/CrazyRock114/Science_Math
+  Self-contained per-topic HTML lessons for primary and middle school. No licence is
+  declared, so all rights are reserved. No code from it is used here.
+  Influence: its lever demonstration suggested the live equation that states its own
+  outcome — rendering "3.92 = 3.92 N m ⇒ balanced" or "8.82 > 2.94 N m ⇒ left sinks"
+  rather than a bare pair of readouts. Implemented here through the optional
+  `EquationBlock.substitute` hook.
+
+
+Open-source dependencies
+------------------------
+
+React, Vite, Tailwind CSS, KaTeX, React Router, Zustand, uPlot, Vitest, TypeScript
+and their transitive dependencies are used under their respective licences (MIT,
+BSD and Apache-2.0). See node_modules/<package>/LICENSE for each.
+
+
+Curriculum references
+---------------------
+
+Cambridge IGCSE Physics (0625) syllabus content is © Cambridge University Press &
+Assessment. This project is not affiliated with, authorised by, endorsed by, or in
+any way officially connected with Cambridge University Press & Assessment.
+
+Syllabus statement identifiers and Core/Supplement tiering are referenced as factual
+curriculum metadata. All statement labels, learning outcomes, lesson text, narration
+and assessment items in this repository are original works written for this course.
