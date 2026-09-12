@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { classroomStories, type StoryQuality } from '@/content/classroom-stories'
-import { lessons } from '@/lib/registry'
+import { lessonMetas as lessons } from '@/lib/registry'
 import { T } from '@/components/i18n/T'
 import { HOOKS } from '@/lib/hooksStrings'
 import { HookCard } from './HookCard'

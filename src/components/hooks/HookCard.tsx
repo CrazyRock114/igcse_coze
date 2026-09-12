@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { ClassroomStory } from '@/content/classroom-stories'
-import { findLesson } from '@/lib/registry'
+import { lessonMetaFor } from '@/lib/registry'
 import { T } from '@/components/i18n/T'
 import { HOOKS } from '@/lib/hooksStrings'
 
@@ -16,7 +16,7 @@ import { HOOKS } from '@/lib/hooksStrings'
  */
 export function HookCard({ story }: { story: ClassroomStory }) {
   const [open, setOpen] = useState(false)
-  const lesson = findLesson('0610', `${story.lesson}-${slugFromLessonCode(story.lesson)}`)
+  const lesson = lessonMetaFor('0610', `${story.lesson}-${slugFromLessonCode(story.lesson)}`)
   const lessonSlug = lesson ? lesson.slug : `${story.lesson}`
   const lessonTitle = lesson?.title
   const termLink = (termId: string) => {

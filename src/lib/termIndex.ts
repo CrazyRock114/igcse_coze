@@ -18,7 +18,7 @@
  */
 
 import type { Lesson, Term } from '@/content/types'
-import { lessons } from './registry'
+import { loadAllSubjects } from './registry'
 
 export interface TermLocation {
   subject: string
@@ -29,17 +29,31 @@ export interface TermLocation {
 
 const locationsByTermId = new Map<string, TermLocation[]>()
 
-function build(): void {
-  for (const lesson of lessons) {
-    for (const term of lesson.glossary) {
-      const list = locationsByTermId.get(term.en) ?? []
-      list.push({ subject: lesson.subject, slug: lesson.slug, lesson, term })
-      locationsByTermId.set(term.en, list)
-    }
-  }
-}
+let built = false
+let building: Promise<Map<string, TermLocation[]>> | null = null
 
-build()
+/**
+ * Glossaries live inside lesson bodies, so the index builds lazily on
+ * first query — consumers suspend via `use(ensureTermIndex())`. The
+ * result is cached for the session and shared across pages.
+ */
+export function ensureTermIndex(): Promise<Map<string, TermLocation[]>> {
+  if (built) return Promise.resolve(locationsByTermId)
+  building ??= loadAllSubjects().then((bundles) => {
+    for (const bundle of bundles) {
+      for (const lesson of bundle.lessons) {
+        for (const term of lesson.glossary) {
+          const list = locationsByTermId.get(term.en) ?? []
+          list.push({ subject: lesson.subject, slug: lesson.slug, lesson, term })
+          locationsByTermId.set(term.en, list)
+        }
+      }
+    }
+    built = true
+    return locationsByTermId
+  })
+  return building
+}
 
 /** All glossary entries that match `termId`, across all lessons. */
 export function getTermLocations(termId: string): TermLocation[] {

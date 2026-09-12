@@ -25,11 +25,11 @@
  * up via `findTermChinese`). The hover works on touch too — a
  * tap-and-hold shows the tooltip via CSS focus-within.
  */
-import { useState } from 'react'
+import { useState, use } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { T } from '@/components/i18n/T'
 import { VOCAB } from '@/lib/vocabStrings'
-import { findFirstTerm, findTermChinese } from '@/lib/termIndex'
+import { ensureTermIndex } from '@/lib/termIndex'
 
 export function RelatedChips({
   termIds,
@@ -40,12 +40,15 @@ export function RelatedChips({
 }) {
   const [, setSearchParams] = useSearchParams()
   const [openTermId, setOpenTermId] = useState<string | null>(null)
+  // Cross-lesson glossary lookups build a lazy index over all subject
+  // chunks; `use()` suspends on first call and the index is cached after.
+  const locations = use(ensureTermIndex())
 
   const filtered = termIds.filter((t) => t !== current)
   if (filtered.length === 0) return null
 
   const goToTerm = (termId: string) => {
-    const loc = findFirstTerm(termId)
+    const loc = locations.get(termId)?.[0] ?? null
     setSearchParams(
       (prev) => {
         const out = new URLSearchParams(prev)
@@ -78,7 +81,7 @@ export function RelatedChips({
         <T value={VOCAB.relatedLabel} />
       </span>
       {filtered.map((t) => {
-        const zh = findTermChinese(t, current)
+        const zh = locations.get(t)?.find((l) => l.term.en !== current)?.term.zh ?? null
         return (
           <span
             key={t}

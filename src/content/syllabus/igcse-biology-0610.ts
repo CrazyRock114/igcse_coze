@@ -702,7 +702,7 @@ const topic21 = topic(
   ]
 )
 
-export const igcseBiology0610: Syllabus = {
+const igcseBiology0610: Syllabus = {
   code: '0610',
   title: { en: 'Cambridge IGCSE Biology', zh: '剑桥 IGCSE 生物' },
   shortName: { en: 'Biology', zh: '生物' },
@@ -733,3 +733,5 @@ export const igcseBiology0610: Syllabus = {
     topic21,
   ],
 }
+
+export default igcseBiology0610

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, use, createContext, useContext } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { T } from '@/components/i18n/T'
 import { LangToggle } from '@/components/i18n/LangToggle'
@@ -10,9 +10,9 @@ import { StudyMode } from '@/components/vocab/StudyMode'
 import { GamePicker } from '@/components/vocab/GamePicker'
 import { MistakeList } from '@/components/vocab/MistakeList'
 import { HooksTab } from '@/components/hooks/HooksTab'
-import { lessons } from '@/lib/registry'
+import { loadAllSubjects } from '@/lib/registry'
 import { useWordBank } from '@/lib/useVocab'
-import { SYLLABUSES } from '@/content/syllabus'
+import { SYLLABUS_META } from '@/content/syllabus'
 import type { Lesson, Term, Bilingual } from '@/content/types'
 import type { ConceptEnrichment } from '@/lib/vocabTypes'
 import { getEnrichment } from '@/content/termEnrichments'
@@ -50,6 +50,17 @@ export interface VocabScope {
   slug: string
 }
 
+/**
+ * Lesson bodies are fetched once per session when the vocab page mounts and
+ * handed to sub-components through context (React purity rule: no module
+ * variables reassigned during render).
+ */
+const LessonsContext = createContext<Lesson[]>([])
+
+function useLessons(): Lesson[] {
+  return useContext(LessonsContext)
+}
+
 /** A row in the lesson-picker dropdown. */
 interface LessonOption {
   subject: string
@@ -58,7 +69,8 @@ interface LessonOption {
   termCount: number
 }
 
-function lessonsInSubject(subject: string): LessonOption[] {
+function useLessonOptions(subject: string): LessonOption[] {
+  const lessons = useLessons()
   return lessons
     .filter((l) => l.subject === subject)
     .map((l) => ({
@@ -75,6 +87,11 @@ function lessonShortTitle(l: Lesson): Bilingual {
 }
 
 export function VocabPage() {
+  // Glossaries live inside lesson bodies (one chunk per subject). Load
+  // them on demand when the vocab page mounts — results are cached and
+  // shared with the mistake list, which needs the same bundles.
+  const bundles = use(loadAllSubjects())
+  const lessons = useMemo(() => bundles.flatMap((b) => b.lessons), [bundles])
   const [searchParams, setSearchParams] = useSearchParams()
 
   // -- URL → state on first mount (one-way read) --
@@ -176,7 +193,7 @@ export function VocabPage() {
       }
     }
     return rows
-  }, [subject, slug])
+  }, [lessons, subject, slug])
 
   // The flat pool the games use — same data, exposed as `term` so the
   // component can pick definitions.
@@ -200,9 +217,9 @@ export function VocabPage() {
       const l = lessons.find((x) => x.subject === subject && x.slug === slug)
       return l ? `${l.title.en}` : `${subject} / ${slug}`
     }
-    const s = SYLLABUSES.find((s) => s.code === subject)
+    const s = SYLLABUS_META.find((s) => s.code === subject)
     return s ? s.title.en : subject
-  }, [subject, slug])
+  }, [lessons, subject, slug])
 
   // Total glossary count across every lesson of the currently selected
   // subject. Used by the "All (N)" chip in the subject row. Must live at
@@ -216,9 +233,10 @@ export function VocabPage() {
       n += l.glossary.length
     }
     return n
-  }, [subject])
+  }, [lessons, subject])
 
   return (
+    <LessonsContext.Provider value={lessons}>
     <main className="mx-auto max-w-5xl px-4 py-8">
       <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -315,6 +333,7 @@ export function VocabPage() {
 
       <WordBankSeeder scope={scope} />
     </main>
+    </LessonsContext.Provider>
   )
 }
 
@@ -340,7 +359,9 @@ function SubjectLessonFilter({
   totalCount: number
   filterLabel: string | null
 }) {
-  const lessonOptions = subject === 'all' ? [] : lessonsInSubject(subject)
+  // With subject='all' the filter inside the hook matches nothing, so the
+  // dropdown stays empty — unconditional call keeps hook order stable.
+  const lessonOptions = useLessonOptions(subject)
   return (
     <div className="rounded-lg border border-line bg-canvas px-3 py-2 text-xs">
       <div className="flex flex-wrap items-center gap-2 text-muted">
@@ -360,7 +381,7 @@ function SubjectLessonFilter({
         >
           All ({totalCount})
         </button>
-        {SYLLABUSES.map((s) => (
+        {SYLLABUS_META.map((s) => (
           <button
             key={s.code}
             type="button"
@@ -432,6 +453,7 @@ function SubjectLessonFilter({
  * one lesson at a time without 480 entries competing for attention.
  */
 function WordBankSeeder({ scope }: { scope: VocabScope }) {
+  const lessons = useLessons()
   const { ensure, words } = useWordBank()
   // Compute the missing terms. `words` is a dependency because every
   // ensure() bumps the bank and we want the next render to see a
@@ -444,7 +466,7 @@ function WordBankSeeder({ scope }: { scope: VocabScope }) {
     })
     const have = new Set(words.map((w) => w.termId))
     return all.filter((a) => !have.has(a.termId))
-  }, [words, scope.subject, scope.slug])
+  }, [lessons, words, scope.subject, scope.slug])
 
   // IMPORTANT: do NOT call ensure() from the render body. setState during
   // render in React 19 trips "Maximum update depth exceeded" (error #185)

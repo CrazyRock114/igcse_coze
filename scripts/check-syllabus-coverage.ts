@@ -9,7 +9,34 @@
  *   npm run check:syllabus -- --min 80    # also fail below 80% overall coverage
  */
 
-import { SYLLABUSES, statementById } from '../src/content/syllabus/index.ts'
+const SYLLABUS_MODULES = [
+  '../src/content/syllabus/igcse-physics-0625.ts',
+  '../src/content/syllabus/igcse-chemistry-0620.ts',
+  '../src/content/syllabus/igcse-biology-0610.ts',
+] as const
+interface CoverageStatement { id: string }
+interface CoverageSyllabus {
+  code: string
+  title: { en: string }
+  cycle: [number, number]
+  topics: { number: number; title: { en: string }; subtopics: { statements: CoverageStatement[] }[] }[]
+}
+const SYLLABUSES: CoverageSyllabus[] = []
+for (const modPath of SYLLABUS_MODULES) {
+  const mod = (await import(modPath)) as { default?: CoverageSyllabus }
+  if (!mod.default) throw new Error(`syllabus module ${modPath} has no default export`)
+  SYLLABUSES.push(mod.default)
+}
+const statementById = new Map<string, CoverageStatement>()
+for (const syl of SYLLABUSES) {
+  for (const topic of syl.topics) {
+    for (const subtopic of topic.subtopics) {
+      for (const statement of subtopic.statements) {
+        statementById.set(statement.id, statement)
+      }
+    }
+  }
+}
 import { c, loadLessons, loadQuestionBanks } from './load-content.ts'
 
 const minArgIndex = process.argv.indexOf('--min')
@@ -41,6 +68,7 @@ for (const q of questions) {
 // --- coverage, per subject --------------------------------------------------
 
 const taught = new Set(lessons.flatMap((l) => l.lesson.syllabus))
+
 const assessed = new Set(questions.flatMap((q) => q.syllabus))
 
 let grandTotal = 0

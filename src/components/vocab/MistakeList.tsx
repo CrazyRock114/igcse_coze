@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, use } from 'react'
 import { Link } from 'react-router-dom'
 import { T } from '@/components/i18n/T'
 import { VOCAB } from '@/lib/vocabStrings'
@@ -10,7 +10,7 @@ import {
   unresolved,
 } from '@/lib/mistakeStore'
 import type { Mistake } from '@/lib/mistakeTypes'
-import { lessons } from '@/lib/registry'
+import { loadAllSubjects } from '@/lib/registry'
 import type { Question } from '@/content/types'
 
 /**
@@ -31,6 +31,11 @@ import type { Question } from '@/content/types'
 type Filter = 'unresolved' | 'resolved' | 'all'
 
 export function MistakeList({ scope }: { scope?: import('@/pages/VocabPage').VocabScope }) {
+  // Checkpoints live inside lesson bodies, which load lazily per subject.
+  // This component only mounts on the "Your mistakes" tab, so the three
+  // subject chunks are fetched on demand (and cached) right here.
+  const bundles = use(loadAllSubjects())
+  const lessons = bundles.flatMap((b) => b.lessons)
   const [rows, setRows] = useState<Mistake[]>(() => mistakeStore.list())
   const [filter, setFilter] = useState<Filter>('unresolved')
 
@@ -52,7 +57,7 @@ export function MistakeList({ scope }: { scope?: import('@/pages/VocabPage').Voc
       }
     }
     return map
-  }, [])
+  }, [lessons])
 
   const scopedRows = useMemo(() => {
     if (!scope) return rows

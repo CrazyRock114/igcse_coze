@@ -18,9 +18,9 @@ IGCSE 双语（英文主、中文脚手架）互动科学课程站。技术栈�
 ## 架构要点
 
 - `src/content/lessons/<subject>/<slug>/`：`lesson.ts`（数据+extras）、`kernel.ts`（模拟纯函数，禁 DOM/React）、`kernel.test.ts`。subject 必须与目录一致，完整性脚本强制校验。
-- `src/lib/registry.ts`：**eager glob** 全量加载所有课程——首屏体积的主要来源；改动加载方式前先理解 `vite.config.ts` 的 `manualChunks` 分组（vendor-react / vendor-three / vendor-katex / vendor-uplot / content-06xx）。
+- `src/lib/registry.ts`：**lazy glob** 按学科异步加载课程（`use()` 消费缓存的 Promise，禁止在渲染期创建新 Promise——React 19 会永久 suspend）。同步索引见 `src/content/lesson-index.generated.ts`（由 `scripts/gen-lesson-index.ts` 生成）。chunk 分组见 `vite.config.ts` 的 `manualChunks`（vendor-react / vendor-three / vendor-katex / vendor-uplot / content-06xx）。
 - `src/lib/progressStore.ts`：`igcse.progress.v1` localStorage 存储；`src/lib/authStore.ts` + `SyncManager`：Supabase 登录/云同步。**未配置 Supabase 环境变量时全链路优雅降级到本地模式，禁止在未配置时抛错**。
-- 教师看板 `/teacher`：登录门（`useCurrentUser`）+ passcode（`src/lib/teacher.ts`，与迁移 SQL 中共享口令一致）。
+- 教师看板 `/teacher`：登录门（`useCurrentUser`）+ email-based RBAC——`TEACHER_EMAIL`（`src/lib/teacher.ts`）必须与 `supabase/migrations/0004_teacher_by_email.sql` 中 RLS 策略的 email literal 保持一致，改一处必须同步另一处。
 - 3D 组件（`three/@react-three` 系）**必须保持 lazy 引用**（Anatomy3D/DnaHelix3D/FoodWeb3D/两个全屏组件均已 lazy）；新增 3D 组件时同样走 `React.lazy`，否则 three.js 会回到首屏关键路径。
 - `build.modulePreload` 保持 `false`：防止 Vite preload helper 被 Rollup 提升到含 three 的 chunk、把 1MB+ 的 3D 栈静态连回入口。
 
@@ -44,5 +44,5 @@ IGCSE 双语（英文主、中文脚手架）互动科学课程站。技术栈�
 
 ## 已知限制
 
-- 主 bundle 仍同步加载三个学科内容 chunk（eager registry 架构）；拆分懒加载是既定迭代项，见 README「Roadmap (post-audit)」。
+- Supabase HTTP 凭证（VITE_SUPABASE_URL/ANON_KEY）未在沙箱注入时，登录/云同步/教师看板走本地降级；迁移已通过 SQL 工具应用到数据库，端到端联调需先开通 Supabase 集成。
 - 沙箱/预览环境若未开通 Supabase，`/teacher` 将显示登录引导——这是预期行为，不是 bug。

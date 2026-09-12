@@ -10,6 +10,22 @@
 import type { Bilingual } from '@/content/types'
 
 export const ui = {
+  /** 404 page heading. */
+  notFoundTitle: {
+    en: 'Page not found',
+    zh: '页面不存在',
+  },
+  /** 404 page body. */
+  notFoundBody: {
+    en: 'The address you followed does not match any lesson, vocabulary page or dashboard in this site.',
+    zh: '你访问的地址没有对应本站中的任何课程、词汇页或看板。',
+  },
+  /** 404 page call to action. */
+  notFoundCta: {
+    en: 'Back to the course map',
+    zh: '返回课程地图',
+  },
+
   /** Shown in the controls panel when a lesson does not supply its own hint. */
   controlsHintFallback: {
     en: 'Drag a slider and watch the readings change.',

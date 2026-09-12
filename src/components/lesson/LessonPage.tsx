@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, use } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import type { Lesson } from '@/content/types'
-import { findKernel, findLesson } from '@/lib/registry'
-import { statementById, subtopicByStatementId } from '@/content/syllabus'
+import type { Lesson, SimKernel } from '@/content/types'
+import { loadLesson, type LessonHandle } from '@/lib/registry'
+import { loadSyllabus, syllabusIndexes, type SyllabusIndexes } from '@/content/syllabus'
 import { T } from '@/components/i18n/T'
 import { Term } from '@/components/i18n/Term'
 import { LangToggle } from '@/components/i18n/LangToggle'
@@ -28,11 +28,17 @@ import { progressStore } from '@/lib/progressStore'
  * title → narration → simulation → equations → controls and readouts → objectives
  * and glossary → checkpoints.
  */
+/** Stable settled promise for invalid params: `use()` must see the same
+ * reference across re-renders (uncached promises suspend forever in React 19). */
+const EMPTY_LESSON_HANDLE: Promise<LessonHandle> = Promise.resolve({})
+
 export function LessonPage() {
   const { subject, slug } = useParams<{ subject: string; slug: string }>()
-  const lesson = subject && slug ? findLesson(subject, slug) : undefined
+  // Registry caches the promise per subject/slug, so `use()` gets a stable
+  // reference across renders and only suspends when the subject chunk changes.
+  const handle = use(subject && slug ? loadLesson(subject, slug) : EMPTY_LESSON_HANDLE)
 
-  if (!lesson) {
+  if (!handle.lesson) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-16">
         <h1 className="text-2xl font-bold">Lesson not found</h1>
@@ -43,11 +49,13 @@ export function LessonPage() {
     )
   }
 
-  return <LessonView lesson={lesson} key={lesson.slug} />
+  return <LessonView lesson={handle.lesson} kernel={handle.kernel} key={handle.lesson.slug} />
 }
 
-function LessonView({ lesson }: { lesson: Lesson }) {
-  const kernel = findKernel(lesson.subject, lesson.slug)
+function LessonView({ lesson, kernel }: { lesson: Lesson; kernel?: SimKernel | undefined }) {
+  // The syllabus document for this subject (statement ids, tiers, subtopics).
+  const syllabus = use(loadSyllabus(lesson.subject))
+  const sylIndex = useMemo(() => syllabusIndexes(syllabus), [syllabus])
 
   const [params, setParams] = useState<Record<string, number>>(() =>
     Object.fromEntries(lesson.sim?.params.map((p) => [p.key, p.default]) ?? [])
@@ -137,7 +145,7 @@ function LessonView({ lesson }: { lesson: Lesson }) {
           <T value={lesson.summary} />
         </p>
 
-        <SyllabusChips ids={lesson.syllabus} />
+        <SyllabusChips ids={lesson.syllabus} sylIndex={sylIndex} />
       </header>
 
       {/* `min-w-0` on the column is load-bearing, not tidying. A grid item defaults to
@@ -254,18 +262,18 @@ function LessonView({ lesson }: { lesson: Lesson }) {
   )
 }
 
-function SyllabusChips({ ids }: { ids: string[] }) {
+function SyllabusChips({ ids, sylIndex }: { ids: string[]; sylIndex: SyllabusIndexes }) {
   // Group by subtopic so a long list reads as "1.2 Motion ×11", not 11 loose codes.
   const groups = new Map<string, { title: string; count: number }>()
   for (const id of ids) {
-    const sub = subtopicByStatementId.get(id)
+    const sub = sylIndex.subtopicOf.get(id)
     if (!sub) continue
     const g = groups.get(sub.id)
     if (g) g.count++
     else groups.set(sub.id, { title: sub.title.en, count: 1 })
   }
 
-  const supplement = ids.filter((id) => statementById.get(id)?.tier === 'supplement').length
+  const supplement = ids.filter((id) => sylIndex.statementById.get(id)?.tier === 'supplement').length
 
   return (
     <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">

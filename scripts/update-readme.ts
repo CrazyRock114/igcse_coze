@@ -12,7 +12,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
-import { igcseBiology0610 } from '../src/content/syllabus/igcse-biology-0610.ts'
+import igcseBiology0610 from '../src/content/syllabus/igcse-biology-0610.ts'
 import { igcseChemistry0620 } from '../src/content/syllabus/igcse-chemistry-0620.ts'
 import { igcsePhysics0625 } from '../src/content/syllabus/igcse-physics-0625.ts'
 import type { Syllabus } from '../src/content/types.ts'

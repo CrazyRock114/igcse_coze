@@ -82,14 +82,20 @@ await withBrowser("vocab chips", async (browser) => {
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(BASE + "/vocab", { waitUntil: "networkidle", timeout: 30000 });
   await page.waitForTimeout(1000);
-  const chip = page.locator("button", { hasText: /Physics|物理/ }).first();
-  if ((await chip.count()) === 0) {
+  // NOTE: locator.click() trips a seccomp SIGTRAP in this sandbox's
+  // headless_shell input pipeline (unrelated to the app). Dispatch the
+  // click from the page context instead.
+  const hasChip = await page.evaluate(() => [...document.querySelectorAll("button")].some((b) => /Physics|物理/.test(b.textContent ?? "")));
+  if (!hasChip) {
     report(true, "vocab chip filter", "no subject chip found (skipped)");
   } else {
-    const before = await page.locator("a, li").count();
-    await chip.click();
-    await page.waitForTimeout(600);
-    const after = await page.locator("a, li").count();
+    const before = await page.evaluate(() => document.getElementsByTagName("*").length);
+    await page.evaluate(() => {
+      const btn = [...document.querySelectorAll("button")].find((b) => /Physics|物理/.test(b.textContent ?? ""));
+      if (btn) btn.click();
+    });
+    await page.waitForTimeout(800);
+    const after = await page.evaluate(() => document.getElementsByTagName("*").length);
     report(after !== before && errors.length === 0, "vocab chip filter", `before=${before} after=${after}${errors.length ? " errors=" + errors[0] : ""}`);
   }
   await page.close();
@@ -113,6 +119,19 @@ await withBrowser("progress persistence", async (browser) => {
   await page.waitForTimeout(1200);
   const keys = await page.evaluate(() => Object.keys(localStorage));
   report(keys.includes("igcse.progress.v1"), "progress store initialized", keys.slice(0, 6).join(", "));
+  await page.close();
+});
+
+// 7) 404 route: unknown URL renders NotFoundPage, not the home page
+await withBrowser("404 page", async (browser) => {
+  const page = await browser.newPage();
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(BASE + "/no/such/route", { waitUntil: "networkidle", timeout: 30000 });
+  await page.waitForTimeout(800);
+  const body = ((await page.textContent("body")) ?? "").trim();
+  const is404 = /Page not found/.test(body) && !/All lessons/.test(body);
+  report(is404 && errors.length === 0, "404 route renders NotFoundPage", `is404=${is404}${errors.length ? " errors=" + errors[0] : ""}`);
   await page.close();
 });
 

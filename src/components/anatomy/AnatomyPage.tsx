@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState, use } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type {
   AnatomyOrgan,
@@ -9,7 +9,7 @@ import type {
   LessonExtra,
   OrganAnatomyExtra,
 } from '@/content/types'
-import { findLesson } from '@/lib/registry'
+import { loadLesson, type LessonHandle } from '@/lib/registry'
 import { T } from '@/components/i18n/T'
 import { ANATOMY_3D } from '@/lib/lessonExtrasStrings'
 import { assetUrl } from '@/lib/assetUrl'
@@ -44,9 +44,15 @@ const Anatomy3D = lazy(() =>
  * file. The lesson's source-of-truth `position3d` is left untouched —
  * overrides are a session-only view of the work-in-progress.
  */
+/** Stable settled promise for invalid params: `use()` must see the same
+ * reference across re-renders (uncached promises suspend forever in React 19). */
+const EMPTY_LESSON_HANDLE: Promise<LessonHandle> = Promise.resolve({})
+
 export function AnatomyPage() {
   const { subject, slug } = useParams<{ subject: string; slug: string }>()
-  const lesson = subject && slug ? findLesson(subject, slug) : undefined
+  // Content loads lazily per subject chunk; `use()` suspends until it arrives.
+  const handle = use(subject && slug ? loadLesson(subject, slug) : EMPTY_LESSON_HANDLE)
+  const lesson: Lesson | undefined = handle.lesson
   const extra = useMemo(
     () => (lesson ? find3DExtra(lesson) : undefined),
     [lesson]
