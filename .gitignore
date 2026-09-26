@@ -18,3 +18,5 @@ public/models/**/*.glb
 
 # Preview files
 .preview
+.cozeproj/reduction
+.codegraph
