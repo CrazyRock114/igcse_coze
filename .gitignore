@@ -15,3 +15,6 @@ public/audio/**/*.mp3
 
 # 3D assets are served from CDN, never committed
 public/models/**/*.glb
+
+# Preview files
+.preview
