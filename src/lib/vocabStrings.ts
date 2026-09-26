@@ -189,4 +189,29 @@ export const VOCAB = {
     en: 'Open any lesson to start tracking your progress.',
     zh: '打开任意一节课开始记录进度。',
   } satisfies Bilingual,
+
+  // --- review session (v1.3) ---
+  reviewStart: { en: 'Start review', zh: '开始复习' } satisfies Bilingual,
+  reviewHeading: { en: 'Review session', zh: '复习模式' } satisfies Bilingual,
+  reviewIntro: {
+    en: 'Redo your open mistakes one by one. A correct answer resolves the mistake; a wrong one logs another attempt.',
+    zh: '逐题重做未掌握的错题。答对即标记已掌握；答错会计入一次重做。',
+  } satisfies Bilingual,
+  reviewPickOption: { en: 'Pick an answer', zh: '选择答案' } satisfies Bilingual,
+  reviewCorrect: { en: 'Correct — resolved!', zh: '答对——已掌握！' } satisfies Bilingual,
+  reviewWrong: { en: 'Not this time.', zh: '再错一次。' } satisfies Bilingual,
+  reviewShowScheme: { en: 'Show mark scheme', zh: '查看评分标准' } satisfies Bilingual,
+  reviewGotIt: { en: 'I got it right', zh: '我做对了' } satisfies Bilingual,
+  reviewStillUnsure: { en: 'Still unsure', zh: '还是没把握' } satisfies Bilingual,
+  reviewNext: { en: 'Next question', zh: '下一题' } satisfies Bilingual,
+  reviewOf: { en: 'Question {i} of {n}', zh: '第 {i}/{n} 题' } satisfies Bilingual,
+  reviewDone: { en: 'Review complete', zh: '复习完成' } satisfies Bilingual,
+  reviewSummary: {
+    en: 'Redone {n} · resolved {ok} · still open {open}',
+    zh: '重做 {n} 题 · 已掌握 {ok} · 仍未掌握 {open}',
+  } satisfies Bilingual,
+  reviewExit: { en: 'Exit review', zh: '退出复习' } satisfies Bilingual,
+  reviewNothing: { en: 'No open mistakes to review.', zh: '没有待复习的错题。' } satisfies Bilingual,
+  reviewBankTag: { en: 'question bank', zh: '题库' } satisfies Bilingual,
+  reviewMissing: { en: 'This question is not in the current content build.', zh: '该题不在当前内容构建中。' } satisfies Bilingual,
 } as const

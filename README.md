@@ -305,12 +305,12 @@ Iterated from the deployment audit (full route smoke test + bundle analysis). Or
 5. ~~Apply `supabase/migrations/0001-0005`~~ — applied to the project database (profiles / word_bank / mistakes / hook_ratings / statement_progress + RLS + triggers). Verified `mistakes.first_seen` exists (needed by SyncManager and the teacher dashboard). End-to-end auth -> sync -> teacher still needs `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` provisioned in the environment.
 6. ~~Verify teacher RBAC contract~~ — `TEACHER_EMAIL` (frontend) matches the RLS email literal in `0004_teacher_by_email.sql`; every column queried by `teacher.ts` / `syncManager.ts` now exists in the schema.
 
-**v1.3 - learning features (next)**
+**v1.3 - learning features — DONE (this iteration)**
 
-7. Narration audio (scripts are written; single offline generation pass).
-8. Paper 5/6 practical skills module (`apparatus`, `graphpaper`).
-9. Standalone question banks + mistake-list review flow (the `mistake` store already exists).
-10. AI tutor / answer marking (streaming SSE integration).
+7. ~~Narration audio~~ — `scripts/gen-narration-audio.ts` runs a single idempotent offline TTS pass (`pnpm run gen:narration`, flags `--only/--langs/--max`); bilingual voices (en: VV bilingual, zh: Xiaohe) write mp3s to `public/audio/<lang>/<scriptId>/<lineId>.mp3`, which `NarrationPlayer` already consumes. First batch: 236 mp3s across the biology course, 0 failures.
+8. ~~Paper 5/6 practical skills module~~ — `/practical` route: apparatus reference cards (8 instruments, SVG art), a measuring drill (cylinder/thermometer readings on seeded half-division boundaries, pure kernel in `src/content/practical/kernel.ts` + 16 unit tests) and a graph-paper trainer (click-to-plot, tolerance grading, OLS best-fit vs ideal line with r²).
+9. ~~Standalone question banks + review flow~~ — `src/content/questions/bank-{0610,0625,0620}.ts` (30 questions, validated by `check:content`); the mistakes list gains a review session (`ReviewSession`): MCQ redo auto-resolves on success, structured questions walk the mark scheme then self-assess, both can call the AI tutor inline.
+10. ~~AI tutor / answer marking~~ — `tutor-plugin.mjs` (vite dev/preview middleware) exposes `POST /api/tutor` as a streaming SSE endpoint (`data: {"content":...}` frames, `[DONE]` terminator) over the platform LLM; frontend `TutorPanel` renders it with a fetch + reader typewriter. Two modes: `explain` (any question card) and `mark` (review session, marks a student answer against the mark scheme). Fails loudly — never fabricates a response.
 
 ## Live site
 

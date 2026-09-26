@@ -1,0 +1,141 @@
+/**
+ * Standalone question bank for Chemistry 0620 — Paper 1/2 style items.
+ * Syllabus ids must exist in igcse-chemistry-0620.ts.
+ */
+import type { Question } from '@/content/types'
+
+const bank: Question[] = [
+  {
+    id: 'c0620-001',
+    syllabus: ['0620.1.2.1'],
+    tier: 'core',
+    commandWord: 'Identify',
+    marks: 1,
+    stem: 'An atom has 11 protons, 12 neutrons and 11 electrons. What is its nucleon (mass) number?',
+    options: ['11', '12', '23', '34'],
+    answerIndex: 2,
+    markScheme: [{ text: 'protons + neutrons = 11 + 12 = 23', marks: 1 }],
+    examinerNote: {
+      en: 'Mass number counts the nucleus only — electrons are far too light to count.',
+      zh: '质量数只统计原子核——电子太轻不计入。',
+    },
+  },
+  {
+    id: 'c0620-002',
+    syllabus: ['0620.2.2.5'],
+    tier: 'extended',
+    commandWord: 'Deduce',
+    marks: 1,
+    stem: 'How many electrons are in the outermost shell of an atom of element Z with configuration 2,8,7?',
+    options: ['2', '7', '8', '17'],
+    answerIndex: 1,
+    markScheme: [{ text: '7 (it is in Group VII)', marks: 1 }],
+  },
+  {
+    id: 'c0620-003',
+    syllabus: ['0620.2.4.6'],
+    tier: 'core',
+    commandWord: 'State',
+    marks: 1,
+    stem: 'What holds the ions together in a crystal of sodium chloride?',
+    options: [
+      'shared pairs of electrons',
+      'electrostatic attraction between oppositely charged ions',
+      'a sea of delocalised electrons',
+      'intermolecular forces',
+    ],
+    answerIndex: 1,
+    markScheme: [{ text: 'strong electrostatic attraction between Na+ and Cl− ions', marks: 1 }],
+  },
+  {
+    id: 'c0620-004',
+    syllabus: ['0620.3.3.1'],
+    tier: 'extended',
+    commandWord: 'Calculate',
+    marks: 2,
+    stem: 'Calculate the volume of CO2 produced at room temperature and pressure when 0.25 mol of CaCO3 reacts fully with excess acid. (1 mol of gas occupies 24 dm³ at r.t.p.)',
+    markScheme: [
+      { text: '1 mol CaCO3 → 1 mol CO2, so 0.25 mol CO2', marks: 1 },
+      { text: '0.25 × 24 = 6.0 dm³', marks: 1 },
+    ],
+  },
+  {
+    id: 'c0620-005',
+    syllabus: ['0620.4.1.4'],
+    tier: 'extended',
+    commandWord: 'Predict',
+    marks: 1,
+    stem: 'Molten lead(II) bromide is electrolysed. What forms at the cathode?',
+    options: ['bromine', 'hydrogen', 'lead', 'nothing'],
+    answerIndex: 2,
+    markScheme: [{ text: 'lead (Pb2+ + 2e− → Pb) — positive metal ions go to the cathode', marks: 1 }],
+  },
+  {
+    id: 'c0620-006',
+    syllabus: ['0620.5.1.5'],
+    tier: 'core',
+    commandWord: 'Explain',
+    marks: 2,
+    stem: 'Explain, in terms of particles, why the rate of a reaction increases when the temperature is raised.',
+    markScheme: [
+      { text: 'particles move faster / have more kinetic energy', marks: 1 },
+      { text: 'more frequent collisions and more collisions with energy ≥ activation energy', marks: 1 },
+    ],
+  },
+  {
+    id: 'c0620-007',
+    syllabus: ['0620.6.2.4'],
+    tier: 'extended',
+    commandWord: 'Identify',
+    marks: 1,
+    stem: 'Which change shifts the equilibrium of N2(g) + 3H2(g) ⇌ 2NH3(g) (forward reaction exothermic) to the right?',
+    options: ['increasing temperature', 'increasing pressure', 'adding a catalyst', 'decreasing pressure'],
+    answerIndex: 1,
+    markScheme: [{ text: 'increasing pressure — equilibrium shifts to the side with fewer gas moles', marks: 1 }],
+    examinerNote: {
+      en: 'A catalyst speeds both directions equally — it never shifts position of equilibrium.',
+      zh: '催化剂同等地加快正逆反应——永远不会移动平衡位置。',
+    },
+  },
+  {
+    id: 'c0620-008',
+    syllabus: ['0620.7.3.2'],
+    tier: 'core',
+    commandWord: 'State',
+    marks: 1,
+    stem: 'Which salt is made by direct combination of its elements?',
+    options: ['sodium sulfate', 'iron sulfide', 'copper carbonate', 'silver chloride'],
+    answerIndex: 1,
+    markScheme: [{ text: 'iron sulfide — Fe + S → FeS', marks: 1 }],
+  },
+  {
+    id: 'c0620-009',
+    syllabus: ['0620.8.2.1'],
+    tier: 'core',
+    commandWord: 'Predict',
+    marks: 1,
+    stem: 'Chlorine water is added to aqueous potassium bromide. What is observed?',
+    options: [
+      'no reaction',
+      'the solution turns from colourless to orange',
+      'a white precipitate forms',
+      'effervescence of bromine vapour',
+    ],
+    answerIndex: 1,
+    markScheme: [{ text: 'chlorine displaces bromine → solution turns orange (bromine formed)', marks: 1 }],
+  },
+  {
+    id: 'c0620-010',
+    syllabus: ['0620.12.3.1'],
+    tier: 'extended',
+    commandWord: 'Describe',
+    marks: 2,
+    stem: 'Describe how to locate and identify the solvent front and the baseline in paper chromatography.',
+    markScheme: [
+      { text: 'draw the baseline in pencil below the spots / pencil does not dissolve', marks: 1 },
+      { text: 'mark the highest point the solvent reaches as the solvent front before it dries', marks: 1 },
+    ],
+  },
+]
+
+export default bank

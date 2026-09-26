@@ -1,0 +1,133 @@
+/**
+ * Standalone question bank for Physics 0625 — Paper 1/2 style items.
+ * Syllabus ids must exist in igcse-physics-0625.ts.
+ */
+import type { Question } from '@/content/types'
+
+const bank: Question[] = [
+  {
+    id: 'p0625-001',
+    syllabus: ['0625.1.1.3'],
+    tier: 'core',
+    commandWord: 'State',
+    marks: 1,
+    stem: 'Which instrument is used to measure the internal diameter of a test tube?',
+    options: ['metre rule', 'measuring cylinder', 'vernier calipers', 'triple beam balance'],
+    answerIndex: 2,
+    markScheme: [{ text: 'vernier calipers (or internal calipers)', marks: 1 }],
+  },
+  {
+    id: 'p0625-002',
+    syllabus: ['0625.1.2.11'],
+    tier: 'extended',
+    commandWord: 'Calculate',
+    marks: 2,
+    stem: 'A car accelerates uniformly from rest to 24 m/s in 8.0 s. Calculate its acceleration.',
+    markScheme: [
+      { text: 'a = (v - u) / t = (24 - 0) / 8.0', marks: 1 },
+      { text: 'a = 3.0 m/s²', marks: 1 },
+    ],
+  },
+  {
+    id: 'p0625-003',
+    syllabus: ['0625.1.3.2'],
+    tier: 'core',
+    commandWord: 'Identify',
+    marks: 1,
+    stem: 'A ball is thrown upwards. At the highest point of its flight, what is its acceleration? (Ignore air resistance.)',
+    options: ['zero', '9.8 m/s² downwards', '9.8 m/s² upwards', 'depends on the throw speed'],
+    answerIndex: 1,
+    markScheme: [{ text: 'g = 9.8 m/s² downwards at all points of the flight', marks: 1 }],
+    examinerNote: {
+      en: '"Zero at the top" is the classic misconception — velocity is zero there, not acceleration.',
+      zh: '"最高点加速度为零"是经典误解——那里速度为零，加速度不是。',
+    },
+  },
+  {
+    id: 'p0625-004',
+    syllabus: ['0625.1.5.1.11'],
+    tier: 'core',
+    commandWord: 'State',
+    marks: 1,
+    stem: 'Where should a force be applied on a spanner to loosen a tight bolt with the least effort?',
+    options: ['as close to the bolt as possible', 'at the centre of the handle', 'at the far end of the handle', 'it does not matter'],
+    answerIndex: 2,
+    markScheme: [{ text: 'far end — largest moment arm for the same force', marks: 1 }],
+  },
+  {
+    id: 'p0625-005',
+    syllabus: ['0625.2.2.2.4'],
+    tier: 'extended',
+    commandWord: 'Deduce',
+    marks: 1,
+    stem: 'A gas is heated at constant volume. What happens to the pressure?',
+    options: ['it decreases', 'it stays the same', 'it increases', 'it becomes zero'],
+    answerIndex: 2,
+    markScheme: [{ text: 'particles move faster, hit walls harder and more often → pressure rises', marks: 1 }],
+  },
+  {
+    id: 'p0625-006',
+    syllabus: ['0625.3.2.3.8'],
+    tier: 'core',
+    commandWord: 'Identify',
+    marks: 1,
+    stem: 'Which row describes an image formed in a plane mirror?',
+    options: [
+      'real, inverted, same size',
+      'virtual, laterally inverted, same size',
+      'virtual, upright, diminished',
+      'real, upright, magnified',
+    ],
+    answerIndex: 1,
+    markScheme: [{ text: 'virtual, laterally inverted, same size, as far behind as object is in front', marks: 1 }],
+  },
+  {
+    id: 'p0625-007',
+    syllabus: ['0625.4.1.5'],
+    tier: 'extended',
+    commandWord: 'Calculate',
+    marks: 2,
+    stem: 'A 12 V supply drives a current of 0.50 A through a resistor. Calculate the power dissipated.',
+    markScheme: [
+      { text: 'P = IV', marks: 1 },
+      { text: 'P = 12 × 0.50 = 6.0 W', marks: 1 },
+    ],
+  },
+  {
+    id: 'p0625-008',
+    syllabus: ['0625.4.2.1.6'],
+    tier: 'core',
+    commandWord: 'State',
+    marks: 1,
+    stem: 'Which circuit component converts electrical energy into kinetic energy?',
+    options: ['lamp', 'motor', 'buzzer', 'heater'],
+    answerIndex: 1,
+    markScheme: [{ text: 'motor', marks: 1 }],
+  },
+  {
+    id: 'p0625-009',
+    syllabus: ['0625.4.5.6.6'],
+    tier: 'extended',
+    commandWord: 'Describe',
+    marks: 3,
+    stem: 'Describe an experiment to show that alpha particles are deflected by a magnetic field but gamma rays are not.',
+    markScheme: [
+      { text: 'source placed near a detector with a magnetic field across the path', marks: 1 },
+      { text: 'alpha path bends (charged particles) / deflection direction by Fleming LHR', marks: 1 },
+      { text: 'gamma path undeviated (no charge)', marks: 1 },
+    ],
+  },
+  {
+    id: 'p0625-010',
+    syllabus: ['0625.6.2.1.2'],
+    tier: 'core',
+    commandWord: 'Give',
+    marks: 1,
+    stem: 'Stars emit electromagnetic waves of many frequencies. Which type has the shortest wavelength?',
+    options: ['radio waves', 'infrared', 'visible light', 'gamma rays'],
+    answerIndex: 3,
+    markScheme: [{ text: 'gamma rays', marks: 1 }],
+  },
+]
+
+export default bank

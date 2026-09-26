@@ -6,7 +6,7 @@
   "description": "Bilingual (EN-primary, ZH-scaffolded) interactive science courses for international curricula, starting with Cambridge IGCSE Physics 0625",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm run check:content && tsc -b && vite build",
+    "build": "pnpm run check:content && tsc -b && vite build && node scripts/check-bundle-budget.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -17,7 +17,12 @@
     "check:content": "tsx scripts/check-content-integrity.ts && tsx scripts/check-syllabus-coverage.ts",
     "audit": "tsx scripts/audit-content.ts",
     "readme": "tsx scripts/update-readme.ts",
-    "qa:routes": "node scripts/qa-routes.mjs"
+    "qa:routes": "node scripts/qa-routes.mjs",
+    "predev": "tsx scripts/gen-lesson-index.ts",
+    "prebuild": "tsx scripts/gen-lesson-index.ts",
+    "gen:lesson-index": "tsx scripts/gen-lesson-index.ts",
+    "qa:bundle": "node scripts/check-bundle-budget.mjs",
+    "gen:narration": "tsx scripts/gen-narration-audio.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

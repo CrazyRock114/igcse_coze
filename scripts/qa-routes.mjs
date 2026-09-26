@@ -135,5 +135,26 @@ await withBrowser("404 page", async (browser) => {
   await page.close();
 });
 
+// 8) Practical skills page: apparatus tab renders, graph tab mounts the trainer
+await withBrowser("practical skills", async (browser) => {
+  const page = await browser.newPage();
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(BASE + "/practical", { waitUntil: "networkidle", timeout: 30000 });
+  await page.waitForTimeout(800);
+  const body = ((await page.textContent("body")) ?? "").trim();
+  const hasApparatus = /Beaker/.test(body) && /Reading drill/.test(body);
+  // switch to the graph tab from the page context (locator.click trips seccomp)
+  await page.evaluate(() => {
+    const btn = [...document.querySelectorAll("button")].find((b) => /Graph paper/.test(b.textContent ?? ""));
+    if (btn) btn.click();
+  });
+  await page.waitForTimeout(600);
+  const hasGraph = /Plot the points/.test(((await page.textContent("body")) ?? ""));
+  const svg = await page.locator("svg[role='img']").count();
+  report(hasApparatus && hasGraph && svg > 0 && errors.length === 0, "practical page renders both tabs", `apparatus=${hasApparatus} graph=${hasGraph} svg=${svg}${errors.length ? " errors=" + errors[0] : ""}`);
+  await page.close();
+});
+
 console.log(failed === 0 ? "\nALL INTERACTION TESTS PASSED" : `\n${failed} INTERACTION TEST(S) FAILED`);
 process.exit(failed === 0 ? 0 : 1);

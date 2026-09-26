@@ -18,6 +18,7 @@ const LessonPage = lazy(() =>
   import('@/components/lesson/LessonPage').then((m) => ({ default: m.LessonPage })),
 )
 const VocabPage = lazy(() => import('@/pages/VocabPage').then((m) => ({ default: m.VocabPage })))
+const PracticalPage = lazy(() => import('@/components/practical/PracticalPage'))
 const AnatomyPage = lazy(() =>
   import('@/components/anatomy/AnatomyPage').then((m) => ({ default: m.AnatomyPage })),
 )
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/subject/:subject" element={<HomePage />} />
           <Route path="/lesson/:subject/:slug" element={<LessonPage />} />
           <Route path="/anatomy/:subject/:slug" element={<AnatomyPage />} />
+          <Route path="/practical" element={<PracticalPage />} />
           <Route
             path="/vocab"
             element={

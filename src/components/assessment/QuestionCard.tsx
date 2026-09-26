@@ -5,6 +5,7 @@ import { commandWordByName } from '@/content/syllabus/command-words'
 import { T } from '@/components/i18n/T'
 import { mistakeStore } from '@/lib/mistakeStore'
 import { progressStore } from '@/lib/progressStore'
+import { TutorPanel } from '@/components/tutor/TutorPanel'
 
 interface QuestionCardProps {
   question: Question
@@ -26,6 +27,7 @@ export function QuestionCard({ question, index, relatedStatementIds }: QuestionC
   const [picked, setPicked] = useState<number | null>(null)
   const [hintOpen, setHintOpen] = useState(false)
   const [loggedAs, setLoggedAs] = useState<'right' | 'wrong' | null>(null)
+  const [tutorOpen, setTutorOpen] = useState(false)
 
   const cw = commandWordByName.get(question.commandWord)
   const isMcq = Array.isArray(question.options)
@@ -137,13 +139,25 @@ export function QuestionCard({ question, index, relatedStatementIds }: QuestionC
         </ul>
       )}
 
-      <button
-        type="button"
-        onClick={() => setRevealed((r) => !r)}
-        className="mt-3 text-sm font-medium text-accent hover:underline"
-      >
-        {revealed ? 'Hide mark scheme' : 'Show mark scheme'}
-      </button>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setRevealed((r) => !r)}
+          className="text-sm font-medium text-accent hover:underline"
+        >
+          {revealed ? 'Hide mark scheme' : 'Show mark scheme'}
+        </button>
+        <button
+          type="button"
+          onClick={() => setTutorOpen((o) => !o)}
+          aria-expanded={tutorOpen}
+          className="text-sm text-ink/60 hover:text-accent"
+        >
+          {tutorOpen ? '✕ Close AI tutor' : '✨ Ask the AI tutor'}
+        </button>
+      </div>
+
+      {tutorOpen && <TutorPanel mode="explain" question={question} onClose={() => setTutorOpen(false)} />}
 
       {picked !== null && loggedAs === 'wrong' && (
         <div className="mt-2 flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900">

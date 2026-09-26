@@ -3,12 +3,13 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
+import { tutorPlugin } from './tutor-plugin.mjs'
 
 export default defineConfig({
   // GitHub Pages serves a project site from /<repo>/, so assets need that prefix. Local
   // dev and any root-domain host use '/', selected by the DEPLOY_BASE env var in CI.
   base: process.env['DEPLOY_BASE'] ?? '/',
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), tutorPlugin()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
