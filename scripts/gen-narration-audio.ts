@@ -1,6 +1,11 @@
 /**
  * Narration audio — one offline TTS generation pass.
  *
+ * Coze-sandbox-only: imports `coze-coding-dev-sdk`, which is not on npm and
+ * cannot resolve outside the sandbox. This file is excluded from `tsc -b`
+ * (see tsconfig.node.json) so deployment builds do not need the SDK — the
+ * generated mp3s are committed under public/audio/ as plain static assets.
+ *
  * The narration *scripts* already live next to every lesson
  * (`src/content/lessons/<subject>/<slug>/narration.ts`, NarrationScript) and
  * NarrationPlayer already looks for pre-generated audio at:

@@ -23,7 +23,7 @@
 | 项 | 说明 |
 | --- | --- |
 | `.coze` | 沙箱 TOML 启动配置（dev/deploy 的 build/run 命令）。其他环境直接 `pnpm dev` / `pnpm build`，无需此文件。`DEPLOY_RUN_PORT` 仅由沙箱注入，代码中禁止硬编码端口的约束仍然有效 |
-| `scripts/gen-narration-audio.ts` | 依赖 `coze-coding-dev-sdk` 的 TTSClient，**只能在 Coze 环境运行**。`public/audio/` 下 236 个 mp3（en/zh 双语）是**已生成的产物**，当普通静态资产使用即可。新增课程需要补音频时：回到 Coze 环境跑 `pnpm run gen:narration`（幂等，已存在即跳过），或另行替换 TTS 供应商 |
+| `scripts/gen-narration-audio.ts` | 依赖 `coze-coding-dev-sdk` 的 TTSClient，**只能在 Coze 环境运行**。`public/audio/` 下 236 个 mp3（en/zh 双语）是**已生成的产物**，当普通静态资产使用即可。该文件已从 `tsc -b` 检查中排除（`tsconfig.node.json` 的 exclude），部署构建**不需要** SDK。新增课程需要补音频时：回到 Coze 环境跑 `pnpm run gen:narration`（幂等，已存在即跳过），或另行替换 TTS 供应商 |
 | `scripts/qa-routes.mjs` 的 `page.evaluate` 点击 | 这是规避**沙箱 seccomp 对 headless_shell 输入管线的 SIGTRAP 限制**的 workaround。标准环境下 `locator.click()` 工作正常，可改回常规写法。该脚本还依赖本机 playwright 浏览器缓存，CI 不可移植（维持 AGENTS.md 既有结论） |
 
 其余全部开箱即用：1654 个 kernel 单测、`check:content` 内容完整性、`check-bundle-budget` bundle 预算、`gen-lesson-index` 索引生成均为纯 Node 脚本，`pnpm build` 可直接作为 Vercel build command。
