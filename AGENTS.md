@@ -4,6 +4,8 @@
 
 IGCSE 双语（英文主、中文脚手架）互动科学课程站。技术栈：Vite 7 + React 19 + TypeScript（strict）+ Tailwind + Supabase（可选后端）。核心设计是「内容即数据」：课程/教学大纲/题目全部为 TypeScript 数据文件，含 kernel 纯函数（驱动 SVG 模拟）与逐课单测。
 
+> 交接与部署迁移（Coze 沙箱差异、Vercel Function 化清单、环境变量）见 **HANDOVER.md**——涉及部署、跨环境移植或 `/api/tutor` 改造时先读它。
+
 ## 常用命令
 
 | 命令 | 作用 |

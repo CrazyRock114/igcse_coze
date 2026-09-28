@@ -312,7 +312,11 @@ Iterated from the deployment audit (full route smoke test + bundle analysis). Or
 9. ~~Standalone question banks + review flow~~ — `src/content/questions/bank-{0610,0625,0620}.ts` (30 questions, validated by `check:content`); the mistakes list gains a review session (`ReviewSession`): MCQ redo auto-resolves on success, structured questions walk the mark scheme then self-assess, both can call the AI tutor inline.
 10. ~~AI tutor / answer marking~~ — `tutor-plugin.mjs` (vite dev/preview middleware) exposes `POST /api/tutor` as a streaming SSE endpoint (`data: {"content":...}` frames, `[DONE]` terminator) over the platform LLM; frontend `TutorPanel` renders it with a fetch + reader typewriter. Two modes: `explain` (any question card) and `mark` (review session, marks a student answer against the mark scheme). Fails loudly — never fabricates a response.
 
-## Live site
+## Deployment
 
-https://crazyrock114.github.io/Science_cc/ — deployed from `main` by GitHub Actions,
-which runs lint, typecheck and the full test suite before publishing.
+Development now happens in this repository (`igcse_coze`); the legacy GitHub Pages
+site (`Science_cc`) is frozen and no longer receives updates. The target platform
+is **Vercel** — read **HANDOVER.md** before deploying: the `/api/tutor` SSE endpoint
+is dev-server-only today and must be ported to a Vercel Function, and narration
+audio generation (`gen:narration`) only runs inside the Coze sandbox. `AGENTS.md`
+remains the source of truth for architecture and conventions.
