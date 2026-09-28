@@ -7,4 +7,7 @@ run = ["sh", "-c", "pnpm run dev --port ${DEPLOY_RUN_PORT}"]
 
 [deploy]
 build = ["bash", "-c", "pnpm install && pnpm run build"]
-run = ["sh", "-c", "pnpm run preview --port ${DEPLOY_RUN_PORT} --host"]
+# vite preview bundles its config into node_modules/.vite-temp before serving,
+# which the deployment runtime cannot create (ENOENT). Use the zero-dependency
+# static server instead (reads DEPLOY_RUN_PORT itself; SPA fallback + audio MIME).
+run = ["sh", "-c", "node scripts/serve-dist.mjs"]

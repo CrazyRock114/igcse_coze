@@ -1,9 +1,14 @@
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 import { tutorPlugin } from './tutor-plugin.mjs'
+
+// This config must stay plain JS (.mjs, no TS syntax). Note: vite 7 bundles
+// ANY config (.ts or .mjs) through node_modules/.vite-temp before loading it,
+// so .mjs does NOT avoid that write — the deployment runtime cannot create it
+// (see scripts/serve-dist.mjs, which replaces `vite preview` in production).
+// .mjs is kept so the config needs no type-check tooling to stay loadable.
 
 export default defineConfig({
   // GitHub Pages serves a project site from /<repo>/, so assets need that prefix. Local
@@ -19,7 +24,6 @@ export default defineConfig({
     // subject chunk trips — raise the bar to keep `vite build` output clean.
     // vendor-three (~1 MB raw / ~320 KB gzip) is a *lazy* chunk, fetched only
     // when a student opens a 3D view, so its size never touches first load.
-    // (Deeper first-load diet: make registry.ts lazy — see iteration plan.)
     chunkSizeWarningLimit: 1300,
     rollupOptions: {
       output: {
@@ -29,7 +33,7 @@ export default defineConfig({
         // per-subject course content. React itself is pinned into its own chunk so
         // Rollup's shared-module placement cannot leak reconciler internals into
         // vendor-three (which would force the entry chunk to import all of three.js).
-        manualChunks(id: string) {
+        manualChunks(id) {
           // Vite 7 injects its __vitePreload helper (used by every lazy())
           // as a virtual module. Rollup then decides where to place it, and
           // with the chunk map below it picked vendor-three — creating a
@@ -44,7 +48,7 @@ export default defineConfig({
             // under .pnpm/<pkg>@<ver>/node_modules/<pkg>/…, so take the segment
             // right after the LAST node_modules/; scoped names keep both parts.
             const seg = (id.split('node_modules/').pop() ?? '').split('/')
-            const PKG = seg[0]!.startsWith('@') ? `${seg[0]}/${seg[1]}` : seg[0]!
+            const PKG = seg[0].startsWith('@') ? `${seg[0]}/${seg[1]}` : seg[0]
             if (PKG === 'three' || PKG.startsWith('three-') || PKG.startsWith('@react-three/'))
               return 'vendor-three'
             if (
